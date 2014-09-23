@@ -1,5 +1,5 @@
 ﻿# Register the HNetCfg library (once)
-regsvr32 hnetcfg.dll
+regsvr32 /s hnetcfg.dll
 
 # Create a NetSharingManager object
 $m = New-Object -ComObject HNetCfg.HNetShare
