@@ -1,4 +1,25 @@
-﻿# Register the HNetCfg library (once)
+﻿# Check if script is running with elevated rights
+
+$isElevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
+
+if (-NOT ($isElevated))
+    {
+        Write-Host " `
+        ! You do NOT have Administrator rights !`n`n `
+        ! Trying to re-run this script as an Administrator !`n`n `
+        ! If it won't work try to run it again as Administrator manually or use different credentials !
+        " -ForegroundColor Red
+        
+        #$arguments = "& '" + $myinvocation.mycommand.definition + "'"
+        #Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $arguments
+        Start-Process -FilePath PowerShell.exe -Verb runAs -ArgumentList $myinvocation.mycommand.definition
+        #Start-Process -FilePath PowerShell.exe -Credential $admincheck -ArgumentList $myinvocation.mycommand.definition
+        exit
+    }
+
+Write-Host "You HAVE Administrator rights!" -ForegroundColor Green
+
+# Register the HNetCfg library (once)
 regsvr32 /s hnetcfg.dll
 
 # Create a NetSharingManager object
@@ -37,3 +58,6 @@ $config_2.EnableSharing(1)
 # Disable sharing
 $config_1.DisableSharing()
 $config_2.DisableSharing()
+
+
+Read-Host 'Press Enter to continue...' | Out-Null
